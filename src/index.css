@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	* {
+		@apply select-none;
+	}
+	input {
+		@apply outline-none;
+	}
+}
+
+@layer utilities {
+	.animate-popup {
+		animation-name: popup;
+		animation-duration: 750ms;
+		animation-timing-function: ease-in-out;
+	}
+}
+
+@keyframes popup {
+	0% {
+		transform: translate(-50%, 4rem); 
+		opacity: 0;
+	}
+	100% {
+		transform: translate(-50%, 0rem);
+		opacity: 0.75;
+	}
+}

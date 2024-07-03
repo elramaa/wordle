@@ -1,39 +1,39 @@
-// import { useState } from "react"
-
-export default function Board({ className }){
+export default function Board({ className, guesses, currentGuessIndex }){
+	// the current guess should be highlighted
 	return (
-		<div className={`grid grid-rows-5 -${className}`}>
-			<div className="grid grid-cols-5">
-				<input type="text" maxLength={1} className= />
-			</div>
+		<div className={`size-full grid grid-rows-5 p-4 gap-1 md:px-12 ${className}`}>
+			{
+				guesses.map((guess, index) => (
+					<GuessDisplay guess={guess} isCurrentGuess={index == currentGuessIndex} key={index} className={`${index > currentGuessIndex && 'opacity-50'}`}/>
+				))
+			}
 		</div>
 	)
-	// return (
-	// 	<div className={`${className}`}>
-	// 		{
-	// 			Array(5).map((_, i) => (
-	// 				<WordInput key={i}/>
-	// 			))
-	// 		}
-	// 	</div>
-	// )
 }
 
-// function WordInput({ length }){
-// 	const [word, setWord] = useState(Array(5));
-// 	return (
-// 		<div>
-// 			{
-// 				word.map((_, i) => (
-// 					<CharInput />
-// 				))
-// 			}
-// 		</div>
-// 	)
-// }
-
-// function CharInput(){
-// 	return (
-// 		<input type="text" maxLength={1} />
-// 	)
-// }
+function GuessDisplay({ guess, isCurrentGuess, className }){
+	return (
+		<div className={`size-full grid grid-cols-5 gap-1 ${className}`}>
+			{
+				guess.split('').map((char, index) => (
+					<div
+						key={index} 
+						className="flex justify-center items-center bg-white rounded-xl font-extrabold text-2xl uppercase border-4 border-gray-300"
+					>
+						{char}
+					</div>
+				))
+			}
+			{
+				Array(5-guess.length).fill("").map((char, index) => (
+					<div
+						key={index} 
+						className={`flex justify-center items-center bg-white rounded-xl font-extrabold text-2xl uppercase border-4 ${isCurrentGuess && index == 0 ? 'border-black' : 'border-gray-300'}`}
+					>
+						{char}
+					</div>
+				))
+			}
+		</div>
+	)
+}
