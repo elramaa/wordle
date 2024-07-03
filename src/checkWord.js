@@ -1,4 +1,4 @@
-export default async function checkword(word){
+export default async function checkWord(word){
 	const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
 	if(!response.ok) return false;
 	

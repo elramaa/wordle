@@ -2,42 +2,51 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Board from "./components/Board";
 import Keyboard from "./components/Keyboard";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useRandomWord from "./api/useRandomWord";
 import ErrorPopup from "./components/ErrorPopup";
-import Popup from "./components/Popup";
+import checkWord from "./checkWord";
+import FinishPopup from "./components/FinishPopup";
 
 export default function App() {
 	// const [word, generateWord] = useRandomWord();
-	const word = 'smack';
+	const correctWord = 'smack';
+	const wordDefinitions = useRef(null);
 	const [guesses, setGuesses] = useState(new Array(5).fill(""));
 	const [currentGuessIndex, setCurrentGuessIndex] = useState(0);
 	const [showError, setShowError] = useState(false);
-	const [validLetter, setValidLetter] = useState({});
+	const [isFinish, setIsFinish] = useState(false);
+	const [invalidLetters, setInvalidLetters] = useState(new Set());
 
 	const currentGuess = guesses[currentGuessIndex];
-	console.log(guesses)
 
-	
-	
 	function handleLetterPress(key){
-		// set current guess dengan meng add key ke akhir current guess
 		if(currentGuess.length == 5) return;
 		setGuesses(guesses.map((guess, index) => (
 			(index == currentGuessIndex) ? guess+key : guess
 		)))
 	}
 
-	function handleEnterPress(){
+	async function handleEnterPress(){
 		if(currentGuess.length !== 5){
 			return;
 		}
-		if(currentGuess == word){
+		if(currentGuess == correctWord){
 			return;
-		}else{
-
-			setCurrentGuessIndex(currentGuessIndex + 1);
 		}
+		if(currentGuessIndex === 4){
+			return;
+		}
+		const isValidWord = await checkWord(currentGuess);
+		if(!isValidWord){
+			return setShowError(true);
+		}
+		const newInvalidLetters = new Set(invalidLetters);
+		currentGuess.split('').forEach((char) => {
+			if(!correctWord.includes(char)) newInvalidLetters.add(char);
+		})
+		setInvalidLetters(newInvalidLetters);
+		setCurrentGuessIndex(currentGuessIndex + 1);
 	}
 
 	function handleDeletePress(){
@@ -49,15 +58,15 @@ export default function App() {
   return (
     <div className={`relative mx-auto max-w-md h-screen bg-slate-200 grid grid-rows-12 font-sans` }>
 			<Header className=""/>
-			<Board className="row-span-6" guesses={guesses} currentGuessIndex={currentGuessIndex} />
-			<Keyboard className="row-span-4" validLetter={validLetter} onLetterPress={handleLetterPress} onEnterPress={handleEnterPress} onDeletePress={handleDeletePress} />
+			<Board className="row-span-6" guesses={guesses} currentGuessIndex={currentGuessIndex} correctWord={correctWord} />
+			<Keyboard className="row-span-4" invalidLetters={invalidLetters} onLetterPress={handleLetterPress} onEnterPress={handleEnterPress} onDeletePress={handleDeletePress} />
 			<Footer className=""/>
 			<ErrorPopup 
-				errorMessage="Sorry! It's not a word."
+				errorMessage={`Sorry! ${currentGuess} is not a valid word.`}
 				showError={showError} 
 				onAnimationEnd={() => setShowError(false)}
 			/>
-			{/* <Popup /> */}
+			<FinishPopup />
     </div>
   )
 }

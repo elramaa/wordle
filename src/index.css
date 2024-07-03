@@ -14,8 +14,8 @@
 @layer utilities {
 	.animate-popup {
 		animation-name: popup;
-		animation-duration: 750ms;
-		animation-timing-function: ease-in-out;
+		animation-duration: 2000ms;
+		animation-timing-function: ease-out;
 	}
 }
 
@@ -24,8 +24,16 @@
 		transform: translate(-50%, 4rem); 
 		opacity: 0;
 	}
+	35% {
+		transform: translate(-50%, 0rem); 
+		opacity: 0.75;
+	}
+	75% {
+		transform: translate(-50%, 0rem); 
+		opacity: 0.75;
+	}
 	100% {
 		transform: translate(-50%, 0rem);
-		opacity: 0.75;
+		opacity: 0;
 	}
 }
